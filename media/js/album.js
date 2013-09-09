@@ -73,15 +73,12 @@ window.AlbumView = Backbone.View.extend({
     initialize: function() {
         this.images = new Images();
 
-        this.thumbSrcs = jQuery.parseJSON($('#thumb_srcs').text());
-        this.thumbSizes = jQuery.parseJSON($('#thumb_sizes').text());
-
-        this.srcs = jQuery.parseJSON($('#srcs').text());
-        this.sizes = jQuery.parseJSON($('#sizes').text());
+        this.image_list = jQuery.parseJSON($('#images').text());
 
         this.createImages();
 
         var self = this;
+        self.image_list = this.image_list;
         $(window).scroll( function() {
           self.endlessScroller();
         });
@@ -100,17 +97,17 @@ window.AlbumView = Backbone.View.extend({
     createImages: function() {
         var self = this;
 
-        $(this.srcs).each(function(index) {
+        $(this.image_list).each(function(index, img) {
             var image = new Image({
                 'id': index,
 
-                'thumbSrc': self.thumbSrcs[index],
-                'thumbWidth': self.thumbSizes[index][0],
-                'thumbHeight': self.thumbSizes[index][1],
+                'thumbSrc': img.thumb_src,
+                'thumbWidth': img.thumb_width,
+                'thumbHeight': img.thumb_height,
 
-                'src': self.srcs[index],
-                'width': self.sizes[index][0],
-                'height': self.sizes[index][0],
+                'src': img.src,
+                'width': img.width,
+                'height': img.height,
 
                 'viewed': false,
             });
@@ -268,11 +265,11 @@ window.AlbumView = Backbone.View.extend({
                 width: 1.4 * img.width(),
                 height: 1.4 * img.height(),
             }, 60, function(){
-                var src = img.attr('src').replace(THUMB_PREFIX, '');
+                var src = img.attr('src');
                 img.attr('src', src);
                 self.src = this.src;
             });
-        }, 700);
+        }, 100);
     },
 
     // Overlay full size image when clicked
@@ -292,47 +289,106 @@ window.AlbumView = Backbone.View.extend({
         $(document.body).append(overlay);
 
         // create full size image
-        var img = $('<img />');
-        img.css('top', scrollTop);
-        img.attr('src', $(this).attr('src').replace(THUMB_PREFIX, ''));
-        console.log($(this).attr('src').replace(THUMB_PREFIX, ''));
-        img.addClass('overlay-img');
+        var img_thumb = $('<img />');
+        var img_large = $('<img />');
+        img_thumb.css('top', scrollTop);
+        img_large.css('top', scrollTop);
 
-        // center image based on its width/height and viewport size once loaded
-        img.hide();
-        img.on('load', function() {
-            event.data.view.centerShownImage();
-            img.show();
-        });
-        img.click(removeOverlay);
-        $(document.body).append(img);
+        // Find the image that has this thumb
+        console.log(self);
+        console.log('Seen source thumb as: ' + $(this).attr('src'));
+        var clickedSrc = $(this).attr('src');
 
-        // from the src, get the corresponding model of the image
-        var split = img.attr('src').split('/');
-        var rel_src = '/' + split.slice(3, split.length).join('/');
-        model = event.data.view.images.getBySrc(rel_src);
-    },
-
-    // center overlayed img in viewport, run again on window resize/scroll
-    centerShownImage: function() {
-
-        var img = $('.overlay-img');
         var viewHeight = $(window).height();
         var viewWidth = $(window).width();
 
         // scale down to viewport size if necessary
-        img.css('max-width', viewWidth * .8);
-        img.css('max-height', viewHeight * .8);
+        $(event.data.view.image_list).each(function (i, image){
+            if (clickedSrc.indexOf(image.thumb_src, clickedSrc.length - image.thumb_src.length) !== -1) {
+                d = event.data.view.scaleImage(image.width, image.height);
+                width = d[0];
+                height = d[1];
+                img_thumb.attr('src', image.thumb_src);
+                img_thumb.attr('width', width);
+                img_thumb.attr('width', height);
+
+                img_large.attr('src', image.src);
+                img_large.attr('width', width);
+                img_large.attr('width', height);
+            }
+        });
+        img_thumb.addClass('overlay-img');
+        img_large.addClass('overlay-img');
+
+        // center image based on its width/height and viewport size once loaded
+        img_large.on('load', function() {
+            console.log("Loaded Large!");
+            img_thumb.remove();
+            event.data.view.centerShownImage();
+            img_large.show();
+        })
+        img_thumb.on('load', function() {
+            console.log("Loaded!");
+            event.data.view.centerShownImage();
+            img_thumb.show();
+        });
+        img_thumb.click(removeOverlay);
+        img_large.click(removeOverlay);
+        $(document.body).append(img_thumb);
+        $(document.body).append(img_large);
+
+        // from the src, get the corresponding model of the image
+        //var split = img.attr('src').split('/');
+        //var rel_src = '/' + split.slice(3, split.length).join('/');
+        model = event.data.view.images.getBySrc(img_large.attr('src'));
+    },
+
+    scaleImage: function (width, height) {
+        // We need to make the maxHeight less than the viewHeight (see centerShownImage).
+        // This is because viewHeight might shrink the image's height without shrinking
+        // the image's width. The same thing is true for maxWidth and viewWidth.
+        // These numbers seem to be magic.
+        var maxHeight = $(window).height() * 0.7;
+        var maxWidth = $(window).width() * 0.7;
+        function refactor(width, height) {
+            return [width * 0.9, height * 0.9];
+        }
+
+        function within_max(width, height) {
+            if (width > maxWidth || height > maxHeight) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        // scale down to viewport size if necessary
+        console.log("Width Height");
+        while(!within_max(width, height)) {
+            new_d = refactor(width, height);
+            width = new_d[0];
+            height =  new_d[1];
+        }
+        console.log("Scaled: " + width + ' ' + height)
+        return [width, height];
+    },
+
+    centerShownImage: function() {
+        var images = $('.overlay-img');
+        var viewHeight = $(window).height();
+        var viewWidth = $(window).width();
+
+        images.css('max-width', viewWidth * .9);
+        images.css('max-height', viewHeight * .9);
 
         // adjust for how far page is scrolled down
-        var height = img.height();
+        var height = images.height();
         var scrollTop = $(window).scrollTop();
-        img.css('top', scrollTop + (viewHeight - height) / 2);
+        images.css('top', scrollTop + (viewHeight - height) / 2);
 
         // center image horizontally
-        var width = img.width();
-        img.css('left', (viewWidth / 2) - (width / 2) + 'px');
-
+        var width = images.width();
+        images.css('left', (viewWidth / 2) - (width / 2) + 'px');
     },
 
     // spinner generator, start/stop functions

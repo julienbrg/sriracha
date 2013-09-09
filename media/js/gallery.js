@@ -9,6 +9,7 @@ var EXPAND_SIZE = 1.1;
 // grab album metadata (slugs, titles, dirs, srcs)
 var getAlbums = function() {
 
+    var album_infos = $('.album-info');
     dirs = new Array();
     slugs = document.getElementsByClass("album-slug");
     for(var index in slugs) {
@@ -59,7 +60,7 @@ var loadAlbums = function(albums) {
         for(var index_src in albums['srcs'][index]){
 
             var a = document.createElement("a");
-            a.href = albums['slugs'][index];
+            a.href = 'gallery/' + albums['slugs'][index];
 
             var img = new Image();
             img.style.visibility= "hidden"; // don't display until shifted
