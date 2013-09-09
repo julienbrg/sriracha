@@ -1,7 +1,7 @@
 sriracha
 ========
 
-Image albums and gallery for use with Wok, with local filesystem and imgur support.
+Image albums and gallery with local filesystem and imgur support. Powered by wok, a static website generator.
 
 Requirements (through pip):
 
@@ -12,7 +12,7 @@ wok
 Setup
 =====
 
-Run ```wok```.
+Run ```wok``` or ```wok --server``` to generate the site.
 
 Local Filesystem Images
 =======================
