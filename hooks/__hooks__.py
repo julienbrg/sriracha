@@ -1,5 +1,3 @@
-from hooks import compile_sass
-
 import thumbnail
 from gallery import Gallery
 

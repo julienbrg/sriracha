@@ -1,12 +1,12 @@
 import glob
 import os
 import pprint
-import simplejson as json
+import json
 
 import requests
 import Image
 
-from settings import imgur_client_ID
+from config import imgur_client_id
 
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -17,7 +17,7 @@ REL_GALLERY_DIR = '/img/gallery/'
 PREVIEW_IMGS_NUM = 3
 THUMB_PREFIX = 'THUMB_'
 
-IMGUR_HEADERS = {'Authorization': 'Client-ID {0}'.format(imgur_client_ID)}
+IMGUR_HEADERS = {'Authorization': 'Client-ID {0}'.format(imgur_client_id)}
 IMGUR_ALBUM_URL = "https://api.imgur.com/3/album/{0}/"
 IMGUR_ALBUM_CACHE = {}
 
@@ -34,7 +34,7 @@ class Gallery(object):
     def __init__(self):
         self.albums = {}
 
-    def get_albums(self, ctx, page, templ_vars):
+    def get_albums(self, page, templ_vars):
         """
         Wok page.template.pre hook
         Load several preview images into each album.
@@ -55,13 +55,13 @@ class Gallery(object):
                 albums[album_page['slug']] = image_list
             templ_vars['site']['albums'] = albums
 
-    def get_images(self, ctx, page):
+    def get_images(self, page):
         """
         Wok page.template.pre hook
         Get all images in the album as relative paths.
         Binds srcs and thumb_srcs to template.
         """
-        is_imgur = 'source' in page.meta and page.meta['source'] == 'imgur'
+        is_imgur = page.meta.get('source') == 'imgur'
 
         if 'type' in page.meta and page.meta['type'] == 'album':
             album = page.meta
@@ -72,14 +72,14 @@ class Gallery(object):
                 Klass = Imgur
             self.albums[album['slug']] = Klass().get_images(page)
 
-    def set_images(self, ctx, page, template_vars):
+    def set_images(self, page, templ_vars):
         """
         Wok page.template.pre hook
         Inserts a single JSON blob containing all images into the page.
         """
         album = page.meta
         if 'type' in page.meta and page.meta['type'] == 'album':
-            template_vars['site']['images'] = json.dumps(
+            templ_vars['site']['images'] = json.dumps(
                 self.albums[album['slug']]
             )
 
@@ -89,6 +89,7 @@ class Local(object):
 
     def get_images(self, page):
         """Get paths of all of the images in the album."""
+        album = page.meta
         srcs = []
         # Get absolute paths of images in album for each file type.
         for file_type in FILE_TYPES:
@@ -155,14 +156,14 @@ def calc_img_hw(path):
     return image.size[0], image.size[1]
 
 
- def calc_thumb(self, src):
+def calc_thumb(self, src):
     for ft in FILE_TYPES:
         if src.endswith(ft):
             return src.replace('.' + ft, TS + '.' + ft)
     raise Exception("Unknown filetype for {0}".format(src))
 
 
- def calc_thumb_xy(*args):
+def calc_thumb_xy(*args):
     def refactor(*args):
         return map(lambda d: int(d * 0.9), args)
 
@@ -179,7 +180,7 @@ def calc_img_hw(path):
     return args
 
 
- def make_image(image):
+def make_image(image):
     width = image['width']
     height = image['height']
     thumb_width, thumb_height = calc_thumb_xy(width, height)
