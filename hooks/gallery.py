@@ -6,7 +6,7 @@ import json
 import requests
 import Image
 
-from config import imgur_client_id
+from config import GALLERY_WOK_TYPE, IMGUR_CLIENT_ID
 
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -17,7 +17,7 @@ REL_GALLERY_DIR = '/img/gallery/'
 PREVIEW_IMGS_NUM = 3
 THUMB_PREFIX = 'THUMB_'
 
-IMGUR_HEADERS = {'Authorization': 'Client-ID {0}'.format(imgur_client_id)}
+IMGUR_HEADERS = {'Authorization': 'Client-ID {0}'.format(IMGUR_CLIENT_ID)}
 IMGUR_ALBUM_URL = "https://api.imgur.com/3/album/{0}/"
 IMGUR_ALBUM_CACHE = {}
 
@@ -39,7 +39,7 @@ class Gallery(object):
         Wok page.template.pre hook
         Load several preview images into each album.
         """
-        if 'type' in page.meta and page.meta['type'] == 'index':
+        if 'type' in page.meta and page.meta['type'] == GALLERY_WOK_TYPE:
             album_pages = sorted(
                 templ_vars['site']['categories']['gallery'],
                 key=lambda album: album['datetime'],
