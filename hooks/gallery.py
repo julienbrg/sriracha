@@ -145,7 +145,7 @@ class Imgur(object):
             make_image,
             sorted(
                 self._get_imgur_album(page.meta['album-id'])['data']['images'],
-                key=lambda img: img['datetime'], reverse=True
+                key=lambda img: img['datetime']
             )
         )
 

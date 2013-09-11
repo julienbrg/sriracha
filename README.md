@@ -1,7 +1,8 @@
 sriracha
 ========
 
-Image albums and gallery with local filesystem and imgur support. Powered by wok, a static website generator.
+Image albums and gallery with local filesystem, imgur, and flickr support.
+Powered by wok, a static website generator.
 
 Requirements (through pip):
 
@@ -21,13 +22,37 @@ Albums are folders located in ```media/img/gallery/```.
 
 Store images in the album folder.
 
-The name of the album folder must match the slug in the album's ```.mkd``` content file in ```content/gallery```.
+The name of the album folder must match the slug in the album's ```.mkd```
+content file in ```content/gallery```.
 
 Imgur Images
 ============
 
 Albums are albums created on ```imgur.com```.
 
-Create a imgur client key and store in ```hooks/config.py``` in ```imgur_client_id```.
+Create a imgur client key and store in ```hooks/config.py``` in ```IMGUR_CLIENT_ID```.
 
-In the album's ```.mkd``` content file in ```content/gallery```, set the ```source``` to ```imgur```. Set the ```album-id``` to the album slug from imgur.
+In the album's ```.mkd``` content file in ```content/gallery```, set the
+```source``` to ```imgur```. Set the ```album-id``` to the album slug from
+imgur.
+
+
+Flickr Images
+=============
+
+Albums are photosets created on ```flickr.com```.
+
+Create a flickr client key and store in ```hooks/config.py``` in
+```FLICKR_CLIENT_ID```.
+
+In the album's ```.mkd``` content file in ```content/gallery```, set the
+```source``` to ```flickr```. Set the ```album-id``` to the photoset ID from
+flickr.
+
+
+Screenshots
+===========
+
+![gallery](http://imgur.com/9EYEUol.jpg)
+
+![album](http://imgur.com/pT2t0aj.jpg)

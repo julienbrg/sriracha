@@ -1,6 +1,6 @@
 output
 .sass-cache
-gallery/
 *.pyc
 *.swp
 config.py
+THUMB_*

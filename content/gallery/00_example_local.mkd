@@ -1,0 +1,11 @@
+title: "Example Album - Local"
+slug: example-album-local
+category: gallery
+type: album
+
+datetime: 2013-09-01 00:00:01
+
+---
+
+This is an example album for locally-hosted images on the filesystem.
+Pictures from [The Oatmeal](http://theoatmeal.com).
