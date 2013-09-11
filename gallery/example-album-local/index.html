@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhml" xml:lang="en" lang="en">
 
   <head>
-    <title>{{ site.title }} | {{ page.title }}</title>
+    <title>Sriracha Gallery | Example Album - Local</title>
     <link rel="stylesheet" type="text/css" href="/css/lib/sticky_footer.css" />
     <link rel="stylesheet" type="text/css" href="/css/lib/font-awesome.css" />
     <link rel="stylesheet" type="text/css" href="/css/base.css" />
@@ -28,17 +28,34 @@
           </div>
 
           <div id="navigation">
-            {% for link in site.tags['navigation'] | sort(attribute='navrank') %}
-                <a href="{{ link.url }}">
-                <span {% if page.url == link.url %} class="current-nav"{% endif %}>{{ link.title }}</span></a>
-            {% endfor %}
+            
           </div>
       </div>
 
       <div class="main">
-        <div class="header-group">{% block page_header %}{% endblock %}</div>
-        {% block content %}
-        {% endblock %}
+        <div class="header-group">
+  <h1>Example Album - Local</h1>
+</div>
+        
+  <link rel="stylesheet" type="text/css" href="/css/album.css" />
+  <script type="text/javascript" src="/js/utilities.js" ></script>
+
+  <!--Bind album images to DOM-->
+  <span id="images" style="display:none">[{"src": "/img/gallery/example-album-local/example1.jpg", "thumb_src": "/img/gallery/example-album-local/THUMB_example1.jpg", "thumb_width": 210, "thumb_height": 296, "height": 1508, "width": 1068}, {"src": "/img/gallery/example-album-local/example2.jpg", "thumb_src": "/img/gallery/example-album-local/THUMB_example2.jpg", "thumb_width": 326, "thumb_height": 210, "height": 410, "width": 638}, {"src": "/img/gallery/example-album-local/example3.jpg", "thumb_src": "/img/gallery/example-album-local/THUMB_example3.jpg", "thumb_width": 328, "thumb_height": 210, "height": 393, "width": 614}]</span>
+
+  <p>This is an example album for locally-hosted images on the filesystem.
+Pictures from <a href="http://theoatmeal.com">The Oatmeal</a>.</p>
+  <div id="album" class="container"></div>
+  <span id="indicator"><span id="arrow-down"></span></span>
+  <span id="rowSpinner" style="display:none;"></span>
+
+  <script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js" ></script>
+  <script type="text/javascript" src="/js/lib/underscore-min.js" ></script>
+  <script type="text/javascript" src="/js/lib/backbone-min.js" ></script>
+  <script type="text/javascript" src="/js/lib/spin.min.js" ></script>
+  <script type="text/javascript" src="/js/album.js" ></script>
+
+
       </div>
     </div>
 
@@ -53,4 +70,3 @@
 
   </body>
 </html>
-

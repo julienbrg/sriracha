@@ -1,7 +1,0 @@
-title: Gallery
-slug: gallery
-url: /index.html
-type: index
-
----
-

@@ -1,2 +1,0 @@
-site_title: Sriracha Gallery
-url_pattern: "/{category}/{slug}/{page}/"
