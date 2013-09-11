@@ -10,6 +10,15 @@ PIL
 requests
 wok
 
+Live Sites
+==========
+
+Sriracha is hot!
+
+- [ngokevin](http://ngokevin.com/gallery)
+- [molly.cat](http://molly.cat)
+- [sriracha demo](http://sriracha.ngokevin.com)
+
 Setup
 =====
 
