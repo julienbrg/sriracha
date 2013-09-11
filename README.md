@@ -4,11 +4,16 @@ sriracha
 Image albums and gallery with local filesystem, imgur, and flickr support.
 Powered by wok, a static website generator.
 
+Authors:
+
+- [Kevin Ngo](http://ngokevin.com)
+- [Jacques Uber](http://uberj.com)
+
 Requirements (through pip):
 
-PIL
-requests
-wok
+- PIL
+- requests
+- wok
 
 Live Sites
 ==========
