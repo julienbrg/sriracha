@@ -42,8 +42,7 @@ Flickr Images
 
 Albums are photosets created on ```flickr.com```.
 
-Create a flickr client key and store in ```hooks/config.py``` in
-```FLICKR_CLIENT_ID```.
+Create a flickr client key and store in ```hooks/config.py``` in ```FLICKR_CLIENT_ID```.
 
 In the album's ```.mkd``` content file in ```content/gallery```, set the
 ```source``` to ```flickr```. Set the ```album-id``` to the photoset ID from
