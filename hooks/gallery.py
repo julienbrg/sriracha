@@ -6,26 +6,30 @@ import json
 import requests
 import Image
 
-from config import GALLERY_WOK_TYPE, IMGUR_CLIENT_ID
+from config import GALLERY_WOK_TYPE, IMGUR_CLIENT_ID, FLICKR_CLIENT_ID
+from lib import flickr
 
 
+# Gallery.
+MAX_WIDTH = 400
+MAX_HEIGHT = 600
 pp = pprint.PrettyPrinter(indent=4)
+PREVIEW_IMGS_NUM = 3
 
+# Local.
 FILE_TYPES = ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF']
 GALLERY_DIR = os.path.abspath('./media/img/gallery/') + '/'
 REL_GALLERY_DIR = '/img/gallery/'
-PREVIEW_IMGS_NUM = 3
 THUMB_PREFIX = 'THUMB_'
 
+# Imgur.
 IMGUR_HEADERS = {'Authorization': 'Client-ID {0}'.format(IMGUR_CLIENT_ID)}
-IMGUR_ALBUM_URL = "https://api.imgur.com/3/album/{0}/"
 IMGUR_ALBUM_CACHE = {}
+IMGUR_ALBUM_URL = 'https://api.imgur.com/3/album/{0}/'
+THUMB_SIZE = 'm'  # (see http://api.imgur.com/models/image)
 
-# THUMB_SIZE_LETTER  (see http://api.imgur.com/models/image)
-TS = 'm'
-
-MAX_WIDTH = 400
-MAX_HEIGHT = 600
+# Flickr.
+flickr.API_KEY = FLICKR_CLIENT_ID
 
 
 class Gallery(object):
@@ -62,6 +66,7 @@ class Gallery(object):
         Binds srcs and thumb_srcs to template.
         """
         is_imgur = page.meta.get('source') == 'imgur'
+        is_flickr = page.meta.get('source') == 'flickr'
 
         if 'type' in page.meta and page.meta['type'] == 'album':
             album = page.meta
@@ -70,6 +75,8 @@ class Gallery(object):
             Klass = Local
             if is_imgur:
                 Klass = Imgur
+            elif is_flickr:
+                Klass = Flickr
             self.albums[album['slug']] = Klass().get_images(page)
 
     def set_images(self, page, templ_vars):
@@ -131,13 +138,14 @@ class Imgur(object):
 
     def get_images(self, page):
         if 'album-id' not in page.meta:
-            raise Exception("No album id for {0}".format(page.meta['title']))
+            raise Exception('No Imgur album-id for {0}'
+                            .format(page.meta['title']))
+
         return map(
             make_image,
             sorted(
                 self._get_imgur_album(page.meta['album-id'])['data']['images'],
-                key=lambda img: img['datetime'],
-                reverse=True
+                key=lambda img: img['datetime'], reverse=True
             )
         )
 
@@ -151,15 +159,43 @@ class Imgur(object):
         return IMGUR_ALBUM_CACHE[album_id]
 
 
+class Flickr(object):
+    """Flickr-hosted images."""
+
+    def get_images(self, page):
+        if 'album-id' not in page.meta:
+            raise Exception('No Flickr album-id for {0}'
+                            .format(page.meta['title']))
+        return self._get_flickr_set(page.meta['album-id'])
+
+    def _get_flickr_set(self, set_id):
+        images = []
+        photoset = flickr.Photoset(set_id)
+        for photo in photoset.getPhotos():
+            sizes = photo.getSizes()
+            image = {}
+            for size in sizes:
+                if size['label'] == 'Small':
+                    image['thumb_src'] = size['source']
+                    image['thumb_width'] = int(size['width'] * 1.20)
+                    image['thumb_height'] = int(size['height'] * 1.20)
+                if size['label'] == 'Large 1600':
+                    image['src'] = size['source']
+                    image['width'] = size['width']
+                    image['height'] = size['height']
+            images.append(image)
+        return images
+
+
 def calc_img_hw(path):
     image = Image.open(path.replace(REL_GALLERY_DIR, GALLERY_DIR))
     return image.size[0], image.size[1]
 
 
-def calc_thumb(self, src):
+def calc_thumb(src):
     for ft in FILE_TYPES:
         if src.endswith(ft):
-            return src.replace('.' + ft, TS + '.' + ft)
+            return src.replace('.' + ft, THUMB_SIZE + '.' + ft)
     raise Exception("Unknown filetype for {0}".format(src))
 
 

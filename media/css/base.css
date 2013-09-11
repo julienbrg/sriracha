@@ -149,7 +149,7 @@ code {
     -webkit-transition: background 0.4s;
     transition: background 0.4s; }
     #navigation span:hover, #navigation span.current-nav {
-      background: url("../img/textures/billie_holiday.png") repeat scroll 0 0 transparent; }
+      background: url("../img/textures/acccent.png") repeat scroll 0 0 transparent; }
   #navigation hr {
     clear: both; }
 
@@ -227,7 +227,7 @@ a.btn {
 
 #footer {
   /* Overrides sticky-footer */
-  background: url("../img/textures/billie_holiday.png") repeat scroll 0 0 transparent;
+  background: url("../img/textures/accent.png") repeat scroll 0 0 transparent;
   font-size: 14px;
   line-height: 28px;
   height: 115px;

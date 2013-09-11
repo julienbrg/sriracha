@@ -202,7 +202,6 @@ window.AlbumView = Backbone.View.extend({
 
     // Insert row of images if scroll near bottom of page.
     endlessScroller: function() {
-
         var documentHeight = $(document).height();
         var windowHeight = $(window).height();
         var scrollTop = $(window).scrollTop();
@@ -230,7 +229,6 @@ window.AlbumView = Backbone.View.extend({
 
     // Create img on top of mouseovered thumb and expand size.
     expandImg: function(event) {
-
         var position = $(this).offset();
 
         var img = $('<img />');
@@ -260,11 +258,15 @@ window.AlbumView = Backbone.View.extend({
             img.css('top', position.top - 7);
 
             // Expand created img with center as expand point, show full-size image.
+            var scaleFactor = 1.4;
+            if (this.images.count() == 1) {
+                scaleFactor = 1.2
+            }
             img.animate({
-                left: parseInt(img.css('left')) - (.125 * 1.4 * img.width()),
-                top: parseInt(img.css('top')) - (.125 * 1.4 * img.height()),
-                width: 1.4 * img.width(),
-                height: 1.4 * img.height(),
+                left: parseInt(img.css('left')) - (.125 * scaleFactor * img.width()),
+                top: parseInt(img.css('top')) - (.125 * scaleFactor * img.height()),
+                width: scaleFactor * img.width(),
+                height: scaleFactor * img.height(),
             }, 60, function(){
                 var src = img.attr('src');
                 img.attr('src', src);
