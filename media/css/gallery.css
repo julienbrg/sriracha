@@ -19,6 +19,8 @@
   z-index: 1; }
   #gallery a img {
     float: left;
+    min-height: 210px;
+    min-width: 210px;
     position: absolute; }
 #gallery img:hover {
   -moz-opacity: .75;
