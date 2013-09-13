@@ -83,9 +83,6 @@ window.AlbumView = Backbone.View.extend({
         $(window).scroll( function() {
           self.endlessScroller();
         });
-        $(window).resize( function() {
-          self.centerShownImage();
-        });
 
         this.spinner = this.createSpinner();
 
@@ -206,14 +203,6 @@ window.AlbumView = Backbone.View.extend({
         var windowHeight = $(window).height();
         var scrollTop = $(window).scrollTop();
 
-        // Adjust overlay if exist.
-        if (scrollTop + windowHeight <= documentHeight) {
-            $('.overlay').css('top', scrollTop);
-            var overlayImg = $('.overlay-img');
-            overlayImg.css('top', scrollTop);
-            this.centerShownImage();
-        }
-
         // Don't do anything if all images inserted.
         if (this.images.unviewed().length == 0) {
             return;
@@ -279,14 +268,13 @@ window.AlbumView = Backbone.View.extend({
         var removeOverlay = function() {
             $('.overlay').remove();
             $('.overlay-img').remove();
-        }
+        };
 
         var scrollTop = $(window).scrollTop();
 
         // Create overlay background.
         var overlay = $('<div />');
         overlay.addClass('overlay');
-        overlay.css('top', scrollTop);
         overlay.click(removeOverlay);
         $(document.body).append(overlay);
 
@@ -294,7 +282,6 @@ window.AlbumView = Backbone.View.extend({
         var imgThumb = $('<img />');
         var imgLarge = $('<img />');
         var imgGroup = imgThumb.add(imgLarge);
-        imgGroup.css('top', scrollTop);
 
         // Find the image that has this thumb.
         var clickedSrc = $(this).attr('src');
@@ -314,11 +301,9 @@ window.AlbumView = Backbone.View.extend({
         // Center image based on its width/height and viewport size once loaded.
         imgLarge.on('load', function() {
             imgThumb.remove();
-            event.data.view.centerShownImage();
             $(this).show();
         });
         imgThumb.on('load', function() {
-            event.data.view.centerShownImage();
             $(this).show();
         });
         imgGroup.click(removeOverlay);
@@ -349,24 +334,6 @@ window.AlbumView = Backbone.View.extend({
             width = height * aspectRatio;
         }
         return [width, height];
-    },
-
-    centerShownImage: function() {
-        var images = $('.overlay-img');
-        var viewHeight = $(window).height();
-        var viewWidth = $(window).width();
-
-        images.css('max-width', viewWidth * .9);
-        images.css('max-height', viewHeight * .9);
-
-        // Adjust for how far page is scrolled down.
-        var height = images.height();
-        var scrollTop = $(window).scrollTop();
-        images.css('top', scrollTop + (viewHeight - height) / 2);
-
-        // Center image horizontally.
-        var width = images.width();
-        images.css('left', (viewWidth / 2) - (width / 2) + 'px');
     },
 
     // Spinner generator, start/stop functions.
