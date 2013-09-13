@@ -304,8 +304,11 @@ window.AlbumView = Backbone.View.extend({
 
         // Scale down to viewport size if necessary.
         var image = event.data.view.images.getBySrc(clickedSrc)[0];
-        imgThumb.attr('src', image.get('thumb_src'));
+        var d = event.data.view.calcScaledSize(image);
+        imgThumb.attr('src', image.get('thumbSrc'));
         imgLarge.attr('src', image.get('src'));
+        imgGroup.css('width', d[0]);
+        imgGroup.css('height', d[1]);
         imgGroup.addClass('overlay-img');
 
         // Center image based on its width/height and viewport size once loaded.
@@ -323,6 +326,29 @@ window.AlbumView = Backbone.View.extend({
 
         // Return the corresponding model of the image.
         return image;
+    },
+
+    calcScaledSize: function(image) {
+        /*
+            Calculates the width and height for a thumb image
+            as if we had applied max-width and max-height to
+            the full-size image. This allows the thumb image to
+            be the same scale as the full image for lazy-loading.
+        */
+        var width = image.get('width');
+        var height = image.get('height');
+        var viewHeight = $(window).height();
+        var viewWidth = $(window).width();
+        var aspectRatio = width / height;
+        if (width > viewWidth) {
+            width = viewWidth * 0.9;
+            height = width / aspectRatio;
+        }
+        if (height > viewHeight) {
+            height = viewHeight * 0.9;
+            width = height * aspectRatio;
+        }
+        return [width, height];
     },
 
     centerShownImage: function() {
