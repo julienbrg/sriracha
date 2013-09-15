@@ -308,11 +308,11 @@ window.AlbumView = Backbone.View.extend({
         // Hide the overlay images, prepare to view the next one.
         imgGroup.add('.overlay .nav').off('click');
         $('.nav.prev').click(function() {
-            imageGroup.hide().attr('src', '');
+            imgGroup.hide().attr('src', '');
             self.showImage.apply(self.images.prev(image), [event]);
         });
         $('.nav.next').click(function() {
-            imageGroup.hide().attr('src', '');
+            imgGroup.hide().attr('src', '');
             self.showImage.apply(self.images.next(image), [event]);
         });
         imgGroup.click(function() {
