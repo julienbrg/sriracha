@@ -55,13 +55,29 @@ var Images = Backbone.Collection.extend({
     },
 
     // Iterator for uninserted images, get next unviewed, set as viewed.
-    next: function() {
+    nextUnviewed: function() {
         var image = this.unviewed()[0];
         if (typeof image == "undefined") {
             return null;
         }
         this.get(image['id']).set('viewed', true);
         return image;
+    },
+
+    // Get previous image in collection.
+    prev: function(image) {
+        if (image.get('id') === 0) {
+            return this.models[this.length - 1];
+        }
+        return this.models[image.get('id') - 1];
+    },
+
+    // Get next image in collection.
+    next: function(image) {
+        if (image.get('id') === this.length - 1) {
+            return this.models[0];
+        }
+        return this.models[image.get('id') + 1];
     }
 });
 
@@ -132,7 +148,7 @@ window.AlbumView = Backbone.View.extend({
 
         // Fill row with enough images to at least fill the page width.
         while (currentRowWidth < PAGE_WIDTH || self.images.unviewed().length <= 2) {
-            var image = self.images.next();
+            var image = self.images.nextUnviewed();
 
             if (image === null && currentRowWidth === 0) {
                 return;
@@ -224,7 +240,13 @@ window.AlbumView = Backbone.View.extend({
             $('.expand').remove();
         });
 
-        img.click({'view': event.data.view}, event.data.view.showImage);
+        // Show image on overlay.
+        img.click({'view': event.data.view}, function() {
+            var view = event.data.view;
+            view.showImage.apply(
+                view.images.getBySrc(img.attr('src'))[0], [event]
+            );
+        });
 
         event.data.view.$el.append(img);
 
@@ -265,28 +287,37 @@ window.AlbumView = Backbone.View.extend({
 
     // Overlay full size image when clicked.
     showImage: function(event) {
+        var image = this;
+        var self = event.data.view;
         $('.overlay').show();
-        var scrollTop = $(window).scrollTop();
 
         // Create full size image.
         var imgThumb = $('.overlay-img.thumb');
         var imgLarge = $('.overlay-img.full');
         var imgGroup = $('.overlay-img');
 
-        // Find the image that has this thumb.
-        var clickedSrc = $(this).attr('src');
-
         // Scale down to viewport size if necessary.
-        var image = event.data.view.images.getBySrc(clickedSrc)[0];
-        var d = event.data.view.calcScaledSize(image);
-        imgThumb.attr('src', image.get('thumbSrc'));
-        imgLarge.attr('src', image.get('src'));
+        var d = self.calcScaledSize(this);
         imgGroup.css('width', d[0]);
         imgGroup.css('height', d[1]);
+        imgThumb.attr('src', image.get('thumbSrc'));
+        imgLarge.attr('src', image.get('src'));
+
+        imgGroup.off('click');
+        imgGroup.click(function() {
+            // Switch to next image on click.
+            // Hide the overlay images, prepare to view the next one.
+            $(this).hide().attr('src', '');
+            var nextImage = self.images.next(image);
+            self.showImage.apply(nextImage, [event]);
+        });
 
         // Center image based on its width/height and viewport size once loaded.
         imgLarge.on('load', function() {
             imgThumb.hide();
+            $(this).show();
+        });
+        imgThumb.on('load', function() {
             $(this).show();
         });
 

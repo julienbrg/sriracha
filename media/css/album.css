@@ -41,6 +41,8 @@ img.expanded {
 
 .overlay {
   display: none; }
+  .overlay:hover {
+    cursor: pointer; }
 
 .overlay-bg {
   background-color: #0a0a14;
@@ -70,3 +72,5 @@ img.expanded {
   right: 0;
   top: 0;
   z-index: 11; }
+  .overlay-img:hover {
+    cursor: pointer; }
