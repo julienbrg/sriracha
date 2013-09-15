@@ -304,16 +304,18 @@ window.AlbumView = Backbone.View.extend({
         imgThumb.attr('src', image.get('thumbSrc'));
         imgLarge.attr('src', image.get('src'));
 
+        // Switch to prev/next image on click.
+        // Hide the overlay images, prepare to view the next one.
         imgGroup.add('.overlay .nav').off('click');
         $('.nav.prev').click(function() {
+            imageGroup.hide().attr('src', '');
             self.showImage.apply(self.images.prev(image), [event]);
         });
         $('.nav.next').click(function() {
+            imageGroup.hide().attr('src', '');
             self.showImage.apply(self.images.next(image), [event]);
         });
         imgGroup.click(function() {
-            // Switch to next image on click.
-            // Hide the overlay images, prepare to view the next one.
             $(this).hide().attr('src', '');
             var nextImage = self.images.next(image);
             self.showImage.apply(nextImage, [event]);
