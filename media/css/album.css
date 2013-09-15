@@ -40,6 +40,9 @@ img.expanded {
   z-index: 9; }
 
 .overlay {
+  display: none; }
+
+.overlay-bg {
   background-color: #0a0a14;
   bottom: 0;
   filter: alpha(opacity=70);

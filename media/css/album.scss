@@ -47,6 +47,10 @@ img {
 }
 
 .overlay {
+    display: none;
+}
+
+.overlay-bg {
     background-color: $black;
     bottom: 0;
     filter: alpha(opacity = 70);
