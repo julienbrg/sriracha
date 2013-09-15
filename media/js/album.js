@@ -100,10 +100,7 @@ window.AlbumView = Backbone.View.extend({
           self.endlessScroller();
         });
 
-        this.insertRow();
-        this.insertRow();
-        this.insertRow();
-
+        this.insertRows();
         this.initOverlay();
     },
 
@@ -203,6 +200,12 @@ window.AlbumView = Backbone.View.extend({
         });
     },
 
+    insertRows: function() {
+        for (var i = 0; i < 4; i++) {
+            this.insertRow();
+        }
+    },
+
     // Insert row of images if scroll near bottom of page.
     endlessScroller: function() {
         var documentHeight = $(document).height();
@@ -215,10 +218,8 @@ window.AlbumView = Backbone.View.extend({
         }
 
         var scrollBot = scrollTop + windowHeight;
-
         if (scrollBot / documentHeight >= .85 || scrollTop == documentHeight) {
-            this.insertRow();
-            this.insertRow();
+            this.insertRows();
         }
     },
 
@@ -303,7 +304,13 @@ window.AlbumView = Backbone.View.extend({
         imgThumb.attr('src', image.get('thumbSrc'));
         imgLarge.attr('src', image.get('src'));
 
-        imgGroup.off('click');
+        imgGroup.add('.overlay .nav').off('click');
+        $('.nav.prev').click(function() {
+            self.showImage.apply(self.images.prev(image), [event]);
+        });
+        $('.nav.next').click(function() {
+            self.showImage.apply(self.images.next(image), [event]);
+        });
         imgGroup.click(function() {
             // Switch to next image on click.
             // Hide the overlay images, prepare to view the next one.
