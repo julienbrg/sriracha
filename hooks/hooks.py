@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def compile_sass(ctx, output_dir):
+def compile_sass(output_dir):
     '''
     Compile Sass files -> CSS in the output directory.
 
