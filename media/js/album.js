@@ -214,6 +214,7 @@ window.AlbumView = Backbone.View.extend({
 
         // Don't do anything if all images inserted.
         if (this.images.unviewed().length == 0) {
+            $('#indicator').remove();
             return;
         }
 
@@ -251,6 +252,7 @@ window.AlbumView = Backbone.View.extend({
 
         event.data.view.$el.append(img);
 
+        var self = this;
         setTimeout(function(){
             // Add image border, adjust image position for border width.
             var position = img.offset();
@@ -264,16 +266,16 @@ window.AlbumView = Backbone.View.extend({
                 scaleFactor = 1.2;
             }
             img.animate({
-                left: parseInt(img.css('left')) - (.125 * scaleFactor * img.width()),
-                top: parseInt(img.css('top')) - (.125 * scaleFactor * img.height()),
+                left: '-=' + .125 * scaleFactor * img.width(),
+                top: '-=' +  .125 * scaleFactor * img.height(),
                 width: scaleFactor * img.width(),
                 height: scaleFactor * img.height(),
-            }, 60, function(){
-                var src = img.attr('src');
+            }, 500, function(){
+                var src = event.data.view.images.getBySrc(img.attr('src'))[0].get('src');
                 img.attr('src', src);
-                self.src = this.src;
+                $(self).attr('src', src);
             });
-        }, 500);
+        }, 300);
     },
 
     initOverlay: function() {
