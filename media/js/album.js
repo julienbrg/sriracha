@@ -193,7 +193,7 @@ window.AlbumView = Backbone.View.extend({
         });
 
         // Wrap img in anchor and insert into page.
-        var self = this;
+        self = this;
         $(row).each(function(index, img) {
             var a = $('<a/>').append(img);
             self.$el.append(a);
@@ -228,28 +228,22 @@ window.AlbumView = Backbone.View.extend({
     expandImg: function(event) {
         var position = $(this).offset();
 
-        var img = $('<img />');
-        img.attr('src', this.src);
-        img.attr('class', 'expand');
-
         // Create new img on directly top of hovered image.
-        img.width(this.width);
-        img.height(this.height);
-        img.css('position', 'absolute');
-        img.css(position);
-
-        img.mouseleave(function() {
+        var img = $('<img />');
+        img.attr('src', this.src)
+        .attr('class', 'expand')
+        .width(this.width)
+        .height(this.height)
+        .css('position', 'absolute').css(position)
+        .mouseleave(function() {
             $('.expand').remove();
-        });
-
-        // Show image on overlay.
-        img.click({'view': event.data.view}, function() {
+        }).click({'view': event.data.view}, function() {
+            // Show image on overlay on click.
             var view = event.data.view;
             view.showImage.apply(
                 view.images.getBySrc(img.attr('src'))[0], [event]
             );
         });
-
         event.data.view.$el.append(img);
 
         var self = this;
@@ -260,22 +254,11 @@ window.AlbumView = Backbone.View.extend({
             img.css('left', position.left - 7);
             img.css('top', position.top - 7);
 
-            // Expand created img with center as expand point, show full-size image.
-            var scaleFactor = 1.4;
-            if (event.data.view.images.length === 1) {
-                scaleFactor = 1.2;
-            }
-            img.animate({
-                left: '-=' + .125 * scaleFactor * img.width(),
-                top: '-=' +  .125 * scaleFactor * img.height(),
-                width: scaleFactor * img.width(),
-                height: scaleFactor * img.height(),
-            }, 500, function(){
-                var src = event.data.view.images.getBySrc(img.attr('src'))[0].get('src');
-                img.attr('src', src);
-                $(self).attr('src', src);
-            });
-        }, 300);
+            // Replace with full src. If user hovers this long, they want moar.
+            var src = event.data.view.images.getBySrc(img.attr('src'))[0].get('src');
+            img.attr('src', src);
+            $(self).attr('src', src);
+        }, 400);
     },
 
     initOverlay: function() {
