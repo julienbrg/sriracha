@@ -1,3 +1,4 @@
 GALLERY_WOK_TYPE = 'index'  # Must match type in content/gallery.mkd.
+GALLERY_WOK_CATEGORY = 'gallery'  # Must match category of albums.
 IMGUR_CLIENT_ID = ''
 FLICKR_CLIENT_ID = ''

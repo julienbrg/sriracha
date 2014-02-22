@@ -6,7 +6,8 @@ import json
 import requests
 import Image
 
-from config import GALLERY_WOK_TYPE, IMGUR_CLIENT_ID, FLICKR_CLIENT_ID
+from config import (GALLERY_WOK_CATEGORY, GALLERY_WOK_TYPE,
+                    IMGUR_CLIENT_ID, FLICKR_CLIENT_ID)
 from lib import flickr
 
 
@@ -44,9 +45,9 @@ class Gallery(object):
         Load several preview images into each album.
         """
         if ('type' in page.meta and page.meta['type'] == GALLERY_WOK_TYPE and
-            'gallery' in templ_vars['site']['categories']):
+            GALLERY_WOK_CATEGORY in templ_vars['site']['categories']):
             album_pages = sorted(
-                templ_vars['site']['categories']['gallery'],
+                templ_vars['site']['categories'][GALLERY_WOK_CATEGORY],
                 key=lambda album: album['datetime'],
             )
             albums = {}
@@ -59,6 +60,7 @@ class Gallery(object):
                 image_list += images[:PREVIEW_IMGS_NUM]
                 albums[album_page['slug']] = image_list
             templ_vars['site']['albums'] = albums
+            templ_vars['site']['gallery_wok_type'] = GALLERY_WOK_CATEGORY
 
     def get_images(self, page):
         """
