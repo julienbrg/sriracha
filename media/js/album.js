@@ -4,7 +4,6 @@
 */
 (function($) {
 
-var THUMB_PREFIX = 'THUMB_';
 var MARGIN = 3;
 var PAGE_WIDTH = $('.main').width();
 
