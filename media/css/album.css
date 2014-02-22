@@ -111,7 +111,7 @@ img.expanded {
     .overlay .next span {
       left: 1px; }
 
-@media screen and (max-device-width: 600px) {
+@media screen and (max-device-width: 768px) {
   .overlay .overlay-img {
     bottom: 55px; }
   .overlay div.prev, .overlay div.next {
