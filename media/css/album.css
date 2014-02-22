@@ -114,16 +114,16 @@ img.expanded {
 @media screen and (max-device-width: 600px) {
   .overlay .overlay-img {
     bottom: 55px; }
-  .overlay .prev, .overlay .next {
+  .overlay div.prev, .overlay div.next {
     border-radius: 0;
     bottom: 0;
     height: 50px;
     margin: 0;
     top: auto;
     width: 50%; }
-    .overlay .prev:hover, .overlay .next:hover {
+    .overlay div.prev:hover, .overlay div.next:hover {
       z-index: 13; }
-    .overlay .prev span, .overlay .next span {
+    .overlay div.prev span, .overlay div.next span {
       color: #e1e1dc;
       position: relative;
       font-size: 32px;
